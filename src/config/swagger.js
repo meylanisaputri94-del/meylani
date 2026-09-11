@@ -1,19 +1,26 @@
 const swaggerJSDoc = require("swagger-jsdoc");
- 
+
 const options = {
   definition: {
     openapi: "3.0.0",
     info: {
       title: "Todo List API",
       version: "1.0.0",
-      description: "Dokumentasi API Todo List — dibangun bertahap dari seri artikel backend Node.js",
+      description:
+        "Dokumentasi API Todo List — dibangun bertahap dari seri artikel backend Node.js",
     },
+
     servers: [
       {
-      url: "http://localhost:3000",
+        url: "https://meylani-ujfp.vercel.app",
+        description: "Production server",
+      },
+      {
+        url: "http://localhost:3000",
         description: "Local development server",
       },
     ],
+
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -29,10 +36,10 @@ const options = {
       },
     },
   },
-  // Swagger akan mencari komentar dokumentasi di semua file route
+
   apis: ["./src/routes/*.js"],
 };
- 
+
 const swaggerSpec = swaggerJSDoc(options);
- 
+
 module.exports = swaggerSpec;

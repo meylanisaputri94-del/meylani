@@ -17,8 +17,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Todo API is running" });
 });
  
-// Halaman dokumentasi interaktif tersedia di /api-docs
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serveFiles(swaggerSpec));
+app.get("/api-docs", swaggerUi.setup(swaggerSpec));
  
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);

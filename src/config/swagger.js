@@ -9,17 +9,10 @@ const options = {
       description:
         "Dokumentasi API Todo List — dibangun bertahap dari seri artikel backend Node.js",
     },
-
-    servers: [
-      {
-        url: "https://meylani-ujfp.vercel.app",
-        description: "Production server",
-      },
-      {
-        url: "http://localhost:3000",
-        description: "Local development server",
-      },
-    ],
+servers: [
+  { url: "/", description: "Current Server (Auto Detect / Vercel)" },
+  { url: "http://localhost:3000", description: "Local development server" },
+],
 
     components: {
       securitySchemes: {

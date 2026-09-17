@@ -3,21 +3,22 @@ require("dotenv").config();
 const app = require("../src/app");
 const connectDB = require("../src/config/db");
 
-let isConnected = false;
+let connected = false;
 
 module.exports = async (req, res) => {
   try {
-    if (!isConnected) {
+    if (!connected) {
       await connectDB();
-      isConnected = true;
+      connected = true;
     }
 
     return app(req, res);
   } catch (error) {
-    console.error("Serverless error:", error);
+    console.error(error);
+
     return res.status(500).json({
       message: "Internal Server Error",
-      error: error.message,
+      error: error.message
     });
   }
 };

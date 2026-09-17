@@ -14,11 +14,7 @@ const options = {
       {
         url: "/",
         description: "Current Server",
-      },
-      {
-        url: "http://localhost:3000",
-        description: "Local development server",
-      },
+      }
     ],
 
     components: {
@@ -26,19 +22,19 @@ const options = {
         bearerAuth: {
           type: "http",
           scheme: "bearer",
-          bearerFormat: "JWT",
+          bearerFormat: "JWT"
         },
 
         apiKeyAuth: {
           type: "apiKey",
           in: "header",
-          name: "x-api-key",
-        },
-      },
-    },
+          name: "x-api-key"
+        }
+      }
+    }
   },
 
-  apis: ["./src/routes/*.js"],
+  apis: ["./src/routes/*.js"]
 };
 
 const swaggerSpec = swaggerJSDoc(options);

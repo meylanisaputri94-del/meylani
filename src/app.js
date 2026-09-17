@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
 
 const todoRoutes = require("./routes/todo.routes");
@@ -21,12 +20,47 @@ app.get("/", (req, res) => {
   res.json({ message: "Todo API is running" });
 });
 
-// Swagger UI
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
-);
+// =========================
+// SWAGGER API DOCUMENTATION
+// =========================
+app.get("/api-docs", (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Todo List API - Swagger UI</title>
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+      />
+    </head>
+
+    <body>
+      <div id="swagger-ui"></div>
+
+      <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+      <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+
+      <script>
+        window.onload = function () {
+          const spec = ${JSON.stringify(swaggerSpec)};
+
+          window.ui = SwaggerUIBundle({
+            spec: spec,
+            dom_id: "#swagger-ui",
+            deepLinking: true,
+            presets: [
+              SwaggerUIBundle.presets.apis,
+              SwaggerUIStandalonePreset
+            ],
+            layout: "StandaloneLayout"
+          });
+        };
+      </script>
+    </body>
+    </html>
+  `);
+});
 
 // API Routes
 app.use("/api/auth", authRoutes);

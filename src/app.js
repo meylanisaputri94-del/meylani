@@ -1,29 +1,51 @@
-const dotenv = require("dotenv");
-dotenv.config();
+const express = require("express");
+const cors = require("cors");
 
-const app = require("../src/app");
-const connectDB = require("../src/config/db");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
 
-let isConnected = false;
+const todoRoutes = require("./routes/todo.routes");
+const authRoutes = require("./routes/auth.routes");
+const statsRoutes = require("./routes/stats.routes");
 
-async function handler(req, res) {
-  try {
-    if (!isConnected) {
-      await connectDB();
-      isConnected = true;
-    }
+const app = express();
 
-    return app(req, res);
-  } catch (error) {
-    console.error("Serverless error:", error);
+app.use(cors());
+app.use(express.json());
 
-    return res.status(500).json({
-      message: "Internal Server Error",
-      error: error.message
-    });
-  }
-}
+// Home
+app.get("/", (req, res) => {
+  res.json({
+    message: "Todo API is running"
+  });
+});
 
-module.exports = {
-  default: handler
-};
+// Swagger UI
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
+
+// API
+app.use("/api/auth", authRoutes);
+app.use("/api/todos", todoRoutes);
+app.use("/api/stats", statsRoutes);
+
+// 404
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route not found"
+  });
+});
+
+// Error
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error"
+  });
+});
+
+module.exports = app;

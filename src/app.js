@@ -5,8 +5,6 @@ const path = require("path");
 
 const swaggerSpec = require("./config/swagger");
 
-const swaggerUiDist = require("swagger-ui-dist");
-
 const todoRoutes = require("./routes/todo.routes");
 const authRoutes = require("./routes/auth.routes");
 const statsRoutes = require("./routes/stats.routes");
@@ -30,7 +28,7 @@ app.get("/", (req, res) => {
 // SWAGGER UI
 // =========================
 
-const swaggerPath = swaggerUiDist.getAbsoluteFSPath();
+const swaggerPath = require("swagger-ui-dist").getAbsoluteFSPath();
 
 const swaggerCss = fs.readFileSync(
   path.join(swaggerPath, "swagger-ui.css"),
@@ -54,6 +52,7 @@ app.get("/api-docs", (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Todo List API</title>
 
   <style>
@@ -76,7 +75,9 @@ app.get("/api-docs", (req, res) => {
     window.onload = function () {
       window.ui = SwaggerUIBundle({
         spec: ${JSON.stringify(swaggerSpec)},
+
         dom_id: "#swagger-ui",
+
         deepLinking: true,
 
         presets: [
@@ -102,7 +103,9 @@ app.get("/api-docs/", (req, res) => {
 // =========================
 
 app.use("/api/auth", authRoutes);
+
 app.use("/api/todos", todoRoutes);
+
 app.use("/api/stats", statsRoutes);
 
 // =========================

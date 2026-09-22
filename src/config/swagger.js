@@ -1,42 +1,63 @@
-const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerPath = swaggerUiDist.getAbsoluteFSPath();
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
+const swaggerCss = fs.readFileSync(
+  path.join(swaggerPath, "swagger-ui.css"),
+  "utf8"
+);
 
-    info: {
-      title: "Todo List API",
-      version: "1.0.0",
-      description: "Dokumentasi API Todo List",
-    },
+const swaggerBundle = fs.readFileSync(
+  path.join(swaggerPath, "swagger-ui-bundle.js"),
+  "utf8"
+);
 
-    servers: [
-      {
-        url: "/",
-        description: "Current Server",
-      }
-    ],
+const swaggerPreset = fs.readFileSync(
+  path.join(swaggerPath, "swagger-ui-standalone-preset.js"),
+  "utf8"
+);
 
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT"
-        },
+app.get("/api-docs", (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Todo List API</title>
 
-        apiKeyAuth: {
-          type: "apiKey",
-          in: "header",
-          name: "x-api-key"
-        }
-      }
-    }
-  },
+  <style>
+    ${swaggerCss}
+  </style>
+</head>
 
-  apis: ["./src/routes/*.js"]
-};
+<body>
+  <div id="swagger-ui"></div>
 
-const swaggerSpec = swaggerJSDoc(options);
+  <script>
+    ${swaggerBundle}
+  </script>
 
-module.exports = swaggerSpec;
+  <script>
+    ${swaggerPreset}
+  </script>
+
+  <script>
+    window.onload = function () {
+      SwaggerUIBundle({
+        spec: ${JSON.stringify(swaggerSpec)},
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout"
+      });
+    };
+  </script>
+</body>
+</html>
+  `);
+});
+
+app.get("/api-docs/", (req, res) => {
+  res.redirect("/api-docs");
+});

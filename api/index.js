@@ -1,24 +1,35 @@
-require("dotenv").config();
+const swaggerJSDoc = require("swagger-jsdoc");
 
-const app = require("../src/app");
-const connectDB = require("../src/config/db");
+const options = {
+  definition: {
+    openapi: "3.0.0",
 
-let isConnected = false;
+    info: {
+      title: "Todo List API",
+      version: "1.0.0",
+      description: "Dokumentasi API Todo List"
+    },
 
-module.exports = async (req, res) => {
-  try {
-    if (!isConnected) {
-      await connectDB();
-      isConnected = true;
+    servers: [
+      {
+        url: "/"
+      }
+    ],
+
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT"
+        }
+      }
     }
+  },
 
-    return app(req, res);
-  } catch (error) {
-    console.error("Serverless error:", error);
-
-    return res.status(500).json({
-      message: "Internal Server Error",
-      error: error.message
-    });
-  }
+  apis: ["./src/routes/*.js"]
 };
+
+const swaggerSpec = swaggerJSDoc(options);
+
+module.exports = swaggerSpec;

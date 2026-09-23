@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const swaggerUiDist = require("swagger-ui-dist");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
 const todoRoutes = require("./routes/todo.routes");

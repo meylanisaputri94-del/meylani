@@ -1,18 +1,8 @@
-const swaggerPath = swaggerUiDist.getAbsoluteFSPath();
+const swaggerUiPath = swaggerUiDist.getAbsoluteFSPath();
 
-const swaggerCss = fs.readFileSync(
-  path.join(swaggerPath, "swagger-ui.css"),
-  "utf8"
-);
-
-const swaggerBundle = fs.readFileSync(
-  path.join(swaggerPath, "swagger-ui-bundle.js"),
-  "utf8"
-);
-
-const swaggerPreset = fs.readFileSync(
-  path.join(swaggerPath, "swagger-ui-standalone-preset.js"),
-  "utf8"
+app.use(
+  "/api-docs",
+  express.static(swaggerUiPath)
 );
 
 app.get("/api-docs", (req, res) => {
@@ -22,26 +12,18 @@ app.get("/api-docs", (req, res) => {
 <head>
   <meta charset="UTF-8">
   <title>Todo List API</title>
-
-  <style>
-    ${swaggerCss}
-  </style>
+  <link rel="stylesheet" href="/api-docs/swagger-ui.css">
 </head>
 
 <body>
   <div id="swagger-ui"></div>
 
-  <script>
-    ${swaggerBundle}
-  </script>
-
-  <script>
-    ${swaggerPreset}
-  </script>
+  <script src="/api-docs/swagger-ui-bundle.js"></script>
+  <script src="/api-docs/swagger-ui-standalone-preset.js"></script>
 
   <script>
     window.onload = function () {
-      SwaggerUIBundle({
+      window.ui = SwaggerUIBundle({
         spec: ${JSON.stringify(swaggerSpec)},
         dom_id: "#swagger-ui",
         deepLinking: true,

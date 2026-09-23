@@ -1,26 +1,9 @@
 require("dotenv").config();
-
 const app = require("../src/app");
 const connectDB = require("../src/config/db");
 
-let isConnected = false;
+// Hubungkan ke MongoDB
+connectDB();
 
-async function handler(req, res) {
-  try {
-    if (!isConnected) {
-      await connectDB();
-      isConnected = true;
-    }
-
-    return app(req, res);
-  } catch (error) {
-    console.error("Serverless error:", error);
-
-    return res.status(500).json({
-      message: "Internal Server Error",
-      error: error.message
-    });
-  }
-}
-
-module.exports = handler;
+// Export aplikasi Express sebagai Vercel Serverless Function
+module.exports = app;

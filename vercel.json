@@ -2,12 +2,13 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/api-docs",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/api-docs/(.*)",
+      "source": "/(.*)",
       "destination": "/api/index.js"
     }
-  ]
+  ],
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "node_modules/swagger-ui-dist/**"
+    }
+  }
 }

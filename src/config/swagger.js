@@ -1,45 +1,42 @@
-const swaggerUiPath = swaggerUiDist.getAbsoluteFSPath();
+const swaggerJSDoc = require("swagger-jsdoc");
 
-app.use(
-  "/api-docs",
-  express.static(swaggerUiPath)
-);
+const options = {
+  definition: {
+    openapi: "3.0.0",
 
-app.get("/api-docs", (req, res) => {
-  res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Todo List API</title>
-  <link rel="stylesheet" href="/api-docs/swagger-ui.css">
-</head>
+    info: {
+      title: "Todo List API",
+      version: "1.0.0",
+      description: "Dokumentasi API Todo List",
+    },
 
-<body>
-  <div id="swagger-ui"></div>
+    servers: [
+      {
+        url: "/",
+        description: "Current Server",
+      },
+    ],
 
-  <script src="/api-docs/swagger-ui-bundle.js"></script>
-  <script src="/api-docs/swagger-ui-standalone-preset.js"></script>
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
 
-  <script>
-    window.onload = function () {
-      window.ui = SwaggerUIBundle({
-        spec: ${JSON.stringify(swaggerSpec)},
-        dom_id: "#swagger-ui",
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        layout: "StandaloneLayout"
-      });
-    };
-  </script>
-</body>
-</html>
-  `);
-});
+        apiKeyAuth: {
+          type: "apiKey",
+          in: "header",
+          name: "x-api-key",
+        },
+      },
+    },
+  },
 
-app.get("/api-docs/", (req, res) => {
-  res.redirect("/api-docs");
-});
+  apis: ["./src/routes/*.js"],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+module.exports = swaggerSpec;

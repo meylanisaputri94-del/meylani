@@ -106,8 +106,7 @@ cp .env.example .env
 | `NODE_ENV`         | Ya    | `development` / `test` / `production`   | Menentukan mode aplikasi berjalan (lihat penjelasan di bawah) |
 | `JWT_SECRET`       | Ya    | string acak & panjang                   | Kunci rahasia untuk menandatangani token JWT                  |
 | `JWT_EXPIRES_IN`   | Ya    | `1d`                                    | Masa berlaku token JWT                                        |
-| `EXTERNAL_API_KEY` | Ya    | string acak & panjang                   | Kunci akses untuk endpoint `/api/stats`                       |
-
+| `EXTERNAL_API_KEY` | Ya    | `my-secret-api-key`                     | Kunci akses untuk endpoint `/api/stats/summary` 
 ## Menjalankan Project
 
 ```bash
@@ -142,12 +141,11 @@ Dokumentasi interaktif tersedia di `http://localhost:3000/api-docs` setelah serv
 | POST   | `/api/auth/register` | -           | Registrasi user baru               |
 | POST   | `/api/auth/login`    | -           | Login, mendapatkan token JWT       |
 | POST   | `/api/todos`         | JWT         | Membuat todo baru                  |
-| GET    | `/api/todos`         | JWT         | Mengambil daftar todo (pagination) |
+| GET    | `/api/todos`         | JWT         | Mengambil daftar todo (pagination, filter status, dan search `?search=judul`) |
 | GET    | `/api/todos/:id`     | JWT         | Mengambil satu todo                |
 | PUT    | `/api/todos/:id`     | JWT         | Mengupdate todo                    |
 | DELETE | `/api/todos/:id`     | JWT         | Menghapus todo                     |
-| GET    | `/api/stats/summary` | API Key     | Ringkasan statistik todo           |
-
+| GET    | `/api/stats/summary` | API Key     | Ringkasan statistik todo (membutuhkan header `x-api-key: my-secret-api-key`)    
 Untuk detail lengkap tiap endpoint (skema request/response, contoh, dan kemungkinan error), lihat dokumentasi Swagger di atas.
 
 ## Lisensi

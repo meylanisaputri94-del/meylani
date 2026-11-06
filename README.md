@@ -41,6 +41,15 @@ API backend untuk aplikasi Todo List, dibangun sebagai boilerplate belajar backe
 - **Testing:** Jest, Supertest, mongodb-memory-server
 - **Dokumentasi:** swagger-jsdoc, swagger-ui-express
 
+
+## Konfigurasi Keamanan & API Key
+Proyek ini menggunakan beberapa variabel lingkungan untuk keamanan:
+- **`JWT_SECRET`**: Kunci rahasia (API Key / Secret Token) yang digunakan untuk mengenkripsi token autentikasi pengguna saat login. Pastikan kunci ini dijaga kerahasiaannya dan tidak dibagikan ke publik.
+- **`PORT`**: Nomor port tempat server backend berjalan (contoh: `3000`).
+- **`MONGODB_URI`**: Alamat koneksi ke database MongoDB.
+- **`EXTERNAL_API_KEY`**: Kunci rahasia khusus (API Key) untuk mengakses endpoint proteksi eksternal/statistik.
+
+
 ## Struktur Project
 
 ```

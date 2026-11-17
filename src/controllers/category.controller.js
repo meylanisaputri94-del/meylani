@@ -1,5 +1,4 @@
-const Category = require('../models/categoryModel');
-
+const Category = require('../models/category');
 // GET: Ambil semua kategori milik user
 getCategories = async (req, res) => {
   try {

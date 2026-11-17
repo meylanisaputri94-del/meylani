@@ -4,7 +4,7 @@ async function createTodo(data) {
   const todo = new Todo({
     title: data.title,
     description: data.description,
-    owner: data.owner,
+    created_by: data.owner, // Diubah dari owner ke created_by agar cocok dengan Mongoose schema
   });
   return await todo.save();
 }

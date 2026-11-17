@@ -4,17 +4,17 @@ async function createTodo(data) {
   const todo = new Todo({
     title: data.title,
     description: data.description,
-    created_by: data.created_by || data.owner, // Mengambil created_by dengan aman (fallback ke owner)
+    created_by: data.created_by || data.owner,
   });
   return await todo.save();
 }
 
 async function getAllTodos(ownerId, queryOptions) {
-  const { page = 1, limit = 10, completed, sortBy = "createdAt", order = "desc" } = queryOptions;
+  const { page = 1, limit = 10, completed, sortBy = "created_at", order = "desc" } = queryOptions;
 
-  const filter = { owner: ownerId };
+  // Diubah dari owner ke created_by agar sesuai dengan model database
+  const filter = { created_by: ownerId };
 
-  // Filter berdasarkan status completed, hanya jika parameter dikirim
   if (completed !== undefined) {
     filter.completed = completed === "true";
   }
@@ -44,7 +44,7 @@ async function getAllTodos(ownerId, queryOptions) {
 }
 
 async function getAllTodosForAdmin(queryOptions) {
-  const { page = 1, limit = 10, completed, sortBy = "createdAt", order = "desc" } = queryOptions;
+  const { page = 1, limit = 10, completed, sortBy = "created_at", order = "desc" } = queryOptions;
 
   const filter = {};
 
@@ -60,7 +60,7 @@ async function getAllTodosForAdmin(queryOptions) {
       .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(Number(limit))
-      .populate("owner", "name email"),
+      .populate("created_by", "name email"), // Diubah dari owner ke created_by
     Todo.countDocuments(filter),
   ]);
 

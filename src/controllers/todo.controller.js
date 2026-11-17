@@ -8,7 +8,7 @@ const createTodo = catchAsync(async (req, res, next) => {
   const todo = await todoService.createTodo({
     title,
     description,
-    owner: req.user._id,
+    created_by: req.user._id, // Diubah dari owner menjadi created_by
   });
 
   res.status(201).json({

@@ -8,7 +8,7 @@ const createTodo = catchAsync(async (req, res, next) => {
   const todo = await todoService.createTodo({
     title,
     description,
-    created_by: req.user._id, // Diubah dari owner menjadi created_by
+    created_by: req.user._id,
   });
 
   res.status(201).json({
@@ -43,7 +43,8 @@ const getTodoById = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  const isOwner = todo.owner.toString() === req.user._id.toString();
+  // Diubah dari owner ke created_by
+  const isOwner = todo.created_by.toString() === req.user._id.toString();
 
   if (!isOwner && req.user.role !== "admin") {
     return next(new AppError("You do not have permission to access this todo", 403));
@@ -66,7 +67,8 @@ const updateTodo = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  const isOwner = existingTodo.owner.toString() === req.user._id.toString();
+  // Diubah dari owner ke created_by
+  const isOwner = existingTodo.created_by.toString() === req.user._id.toString();
 
   if (!isOwner && req.user.role !== "admin") {
     return next(new AppError("You do not have permission to update this todo", 403));
@@ -90,7 +92,8 @@ const deleteTodo = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  const isOwner = existingTodo.owner.toString() === req.user._id.toString();
+  // Diubah dari owner ke created_by
+  const isOwner = existingTodo.created_by.toString() === req.user._id.toString();
 
   if (!isOwner && req.user.role !== "admin") {
     return next(new AppError("You do not have permission to delete this todo", 403));

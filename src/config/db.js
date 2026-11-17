@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
 async function connectDB() {
   const uri = process.env.MONGODB_URI;
 
@@ -7,13 +13,29 @@ async function connectDB() {
     throw new Error("MONGODB_URI belum diatur");
   }
 
-  if (mongoose.connection.readyState === 1) {
-    return;
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  await mongoose.connect(uri);
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false, // Mencegah buffering timeout di serverless
+    };
 
-  console.log("MongoDB connected successfully");
+    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
+      console.log("MongoDB connected successfully");
+      return mongoose;
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
+  }
+
+  return cached.conn;
 }
 
 module.exports = connectDB;

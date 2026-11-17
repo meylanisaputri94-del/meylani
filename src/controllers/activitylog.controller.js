@@ -1,4 +1,3 @@
-module.exports = { getActivityLogs };
 const ActivityLog = require('../models/activityLog');
 
 const getActivityLogs = async (req, res) => {

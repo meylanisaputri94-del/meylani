@@ -5,10 +5,17 @@ const catchAsync = require("../utils/catchAsync");
 const createTodo = catchAsync(async (req, res, next) => {
   const { title, description } = req.body;
 
+  // Fallback pengaman untuk membaca ID user dari berbagai format property token JWT
+  const userId = req.user?._id || req.user?.id || req.user?.userId;
+
+  if (!userId) {
+    return next(new AppError("User ID not found in token. Please login again.", 401));
+  }
+
   const todo = await todoService.createTodo({
     title,
     description,
-    created_by: req.user._id,
+    created_by: userId,
   });
 
   res.status(201).json({
@@ -21,11 +28,12 @@ const createTodo = catchAsync(async (req, res, next) => {
 const getAllTodos = catchAsync(async (req, res, next) => {
   const { page, limit, completed, sortBy, order } = req.query;
   const queryOptions = { page, limit, completed, sortBy, order };
+  const userId = req.user?._id || req.user?.id || req.user?.userId;
 
   const result =
     req.user.role === "admin"
       ? await todoService.getAllTodosForAdmin(queryOptions)
-      : await todoService.getAllTodos(req.user._id, queryOptions);
+      : await todoService.getAllTodos(userId, queryOptions);
 
   res.status(200).json({
     success: true,
@@ -43,8 +51,8 @@ const getTodoById = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  // Diubah dari owner ke created_by
-  const isOwner = todo.created_by.toString() === req.user._id.toString();
+  const userId = req.user?._id || req.user?.id || req.user?.userId;
+  const isOwner = todo.created_by.toString() === userId.toString();
 
   if (!isOwner && req.user.role !== "admin") {
     return next(new AppError("You do not have permission to access this todo", 403));
@@ -61,57 +69,4 @@ const updateTodo = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { title, description, completed } = req.body;
 
-  const existingTodo = await todoService.getTodoById(id);
-
-  if (!existingTodo) {
-    return next(new AppError("Todo not found", 404));
-  }
-
-  // Diubah dari owner ke created_by
-  const isOwner = existingTodo.created_by.toString() === req.user._id.toString();
-
-  if (!isOwner && req.user.role !== "admin") {
-    return next(new AppError("You do not have permission to update this todo", 403));
-  }
-
-  const updatedTodo = await todoService.updateTodo(id, { title, description, completed });
-
-  res.status(200).json({
-    success: true,
-    message: "Todo updated successfully",
-    data: updatedTodo,
-  });
-});
-
-const deleteTodo = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-
-  const existingTodo = await todoService.getTodoById(id);
-
-  if (!existingTodo) {
-    return next(new AppError("Todo not found", 404));
-  }
-
-  // Diubah dari owner ke created_by
-  const isOwner = existingTodo.created_by.toString() === req.user._id.toString();
-
-  if (!isOwner && req.user.role !== "admin") {
-    return next(new AppError("You do not have permission to delete this todo", 403));
-  }
-
-  await todoService.deleteTodo(id);
-
-  res.status(200).json({
-    success: true,
-    message: "Todo deleted successfully",
-    data: existingTodo,
-  });
-});
-
-module.exports = {
-  createTodo,
-  getAllTodos,
-  getTodoById,
-  updateTodo,
-  deleteTodo,
-};
+  const existingTodo = await todoService.get

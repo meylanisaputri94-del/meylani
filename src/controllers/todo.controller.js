@@ -69,4 +69,57 @@ const updateTodo = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { title, description, completed } = req.body;
 
-  const existingTodo = await todoService.get
+  const existingTodo = await todoService.getTodoById(id);
+
+  if (!existingTodo) {
+    return next(new AppError("Todo not found", 404));
+  }
+
+  const userId = req.user?._id || req.user?.id || req.user?.userId;
+  const isOwner = existingTodo.created_by.toString() === userId.toString();
+
+  if (!isOwner && req.user.role !== "admin") {
+    return next(new AppError("You do not have permission to update this todo", 403));
+  }
+
+  const updatedTodo = await todoService.updateTodo(id, { title, description, completed });
+
+  res.status(200).json({
+    success: true,
+    message: "Todo updated successfully",
+    data: updatedTodo,
+  });
+});
+
+const deleteTodo = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const existingTodo = await todoService.getTodoById(id);
+
+  if (!existingTodo) {
+    return next(new AppError("Todo not found", 404));
+  }
+
+  const userId = req.user?._id || req.user?.id || req.user?.userId;
+  const isOwner = existingTodo.created_by.toString() === userId.toString();
+
+  if (!isOwner && req.user.role !== "admin") {
+    return next(new AppError("You do not have permission to delete this todo", 403));
+  }
+
+  await todoService.deleteTodo(id);
+
+  res.status(200).json({
+    success: true,
+    message: "Todo deleted successfully",
+    data: existingTodo,
+  });
+});
+
+module.exports = {
+  createTodo,
+  getAllTodos,
+  getTodoById,
+  updateTodo,
+  deleteTodo,
+};

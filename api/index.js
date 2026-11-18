@@ -1,9 +1,23 @@
+
 require("dotenv").config();
+
 const app = require("../src/app");
 const connectDB = require("../src/config/db");
 
-// Hubungkan ke MongoDB
-connectDB();
+// Export aplikasi sebagai Vercel Serverless Function
+module.exports = async (req, res) => {
+  try {
+    // Pastikan MongoDB terhubung sebelum request diproses
+    await connectDB();
 
-// Export aplikasi Express sebagai Vercel Serverless Function
-module.exports = app;
+    // Jalankan aplikasi Express
+    return app(req, res);
+  } catch (error) {
+    console.error("Database connection error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+};
